@@ -1,10 +1,7 @@
 #version 460
 
-layout (location = 0) out vec4 color;
-
-in vec3 position;
-in vec4 colour;
+out vec4 color;
 
 void main() {
-    color = colour;
+    color = vec4(1.0);
 }

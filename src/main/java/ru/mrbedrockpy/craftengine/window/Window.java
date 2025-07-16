@@ -78,6 +78,7 @@ public class Window {
 
     public static void clear() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     public static void swapBuffers() {

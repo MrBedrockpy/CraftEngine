@@ -13,7 +13,7 @@ import static org.lwjgl.opengl.GL46C.*;
 
 @Getter
 @AllArgsConstructor
-public class Texture implements Disposable {
+public class Texture {
 
     private final int id;
 
@@ -60,7 +60,6 @@ public class Texture implements Disposable {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    @Override
     public void dispose() {
         glDeleteTextures(id);
     }
