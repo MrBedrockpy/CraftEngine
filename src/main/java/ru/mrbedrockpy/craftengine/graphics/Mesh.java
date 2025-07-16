@@ -1,5 +1,6 @@
 package ru.mrbedrockpy.craftengine.graphics;
 
+import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryUtil;
 import ru.mrbedrockpy.craftengine.window.Camera;
 
@@ -15,42 +16,44 @@ public class Mesh {
 
     private final Shader shader;
 
-    public Mesh(float[] positions) {
-        vertexCount = positions.length / 3;
+    public Mesh(float[] positions, float[] texCoords) {
+        this.vertexCount = positions.length / 3;
+
+        shader = Shader.load("vertex.glsl", "fragment.glsl");
 
         vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);
 
         vboId = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
-
-        FloatBuffer buffer = MemoryUtil.memAllocFloat(positions.length);
-        buffer.put(positions).flip();
-        glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
-        MemoryUtil.memFree(buffer);
-
-        int stride = 3 * Float.BYTES;
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
+        glBufferData(GL_ARRAY_BUFFER, positions, GL_STATIC_DRAW);
         glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
+
+        int texVboId = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, texVboId);
+        glBufferData(GL_ARRAY_BUFFER, texCoords, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-
-        shader = Shader.load("vertex.glsl", "fragment.glsl");
     }
 
-    public void render(Camera camera) {
+    public void render(Matrix4f view, Matrix4f projection) {
         shader.use();
-        shader.setUniformMatrix4f("view", camera.getViewMatrix());
-        shader.setUniformMatrix4f("projection", camera.getProjectionMatrix());
+        shader.setUniformMatrix4f("view", view);
+        shader.setUniformMatrix4f("projection", projection);
+
         glBindVertexArray(vaoId);
+        glEnableVertexAttribArray(0);
         glDrawArrays(GL_TRIANGLES, 0, vertexCount);
+        glDisableVertexAttribArray(0);
         glBindVertexArray(0);
     }
 
     public void cleanup() {
         glDisableVertexAttribArray(0);
-        // glDisableVertexAttribArray(1); // Удалить тоже
         glDeleteBuffers(vboId);
         glDeleteVertexArrays(vaoId);
         shader.dispose();
