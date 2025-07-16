@@ -1,11 +1,14 @@
 package ru.mrbedrockpy.craftengine;
 
 import lombok.Getter;
+import org.joml.Vector3i;
+import org.lwjgl.glfw.GLFW;
 import ru.mrbedrockpy.craftengine.player.Player;
 import ru.mrbedrockpy.craftengine.window.Input;
 import ru.mrbedrockpy.craftengine.window.Window;
 import ru.mrbedrockpy.craftengine.window.WindowSettings;
 import ru.mrbedrockpy.craftengine.world.World;
+import ru.mrbedrockpy.craftengine.world.block.Block;
 
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
 import static org.lwjgl.glfw.GLFW.glfwGetTime;
@@ -20,6 +23,7 @@ public abstract class AbstractGame {
 
     private Player player;
     private World world;
+    private Block block;
 
     public AbstractGame(WindowSettings windowSettings) {
         this.windowSettings = windowSettings;
@@ -47,6 +51,7 @@ public abstract class AbstractGame {
     protected void initialize() {
         Window.initialize(windowSettings);
         Input.initialize();
+        block = new Block(new Vector3i(1, 1, -1));
     }
 
     protected void tick() {
@@ -54,7 +59,7 @@ public abstract class AbstractGame {
     }
 
     protected void render() {
-
+        block.render();
     }
 
     protected void terminate() {
