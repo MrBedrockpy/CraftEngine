@@ -1,6 +1,7 @@
 package ru.mrbedrockpy.craftengine.world.block;
 
 import lombok.AllArgsConstructor;
+import org.joml.Matrix4f;
 import org.joml.Vector3i;
 import org.lwjgl.opengl.GL46C;
 import ru.mrbedrockpy.craftengine.graphics.Mesh;
@@ -51,13 +52,25 @@ public class BlockModel implements Model {
 
     @Override
     public void render() {
-        glPushMatrix();
-        glTranslatef(position.x, position.y, position.z);
+        Shader shader = getShader();
+        shader.use(); // активируем шейдер
 
+        // создаём модельную матрицу (позиционируем блок в мире)
+        Matrix4f modelMatrix = new Matrix4f().translation(position.x, position.y, position.z);
+
+        // передаём матрицу в шейдер
+        shader.setUniformMatrix4f("model", modelMatrix);
+
+        // текстура
+        Texture texture = getTexture();
+        texture.use();
+
+        // отрисовка меша
         glBindVertexArray(mesh.getVAO());
         glDrawArrays(GL_LINES, 0, mesh.getVertices());
         glBindVertexArray(0);
 
-        glPopMatrix();
+        texture.unbind();
+        shader.unbind();
     }
 }

@@ -2,9 +2,11 @@ package ru.mrbedrockpy.craftengine.graphics;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -68,6 +70,23 @@ public class Shader implements Disposable {
 
     public void use() {
         glUseProgram(id);
+    }
+
+    public void unbind() {
+        glUseProgram(0);
+    }
+
+    public void setUniformMatrix4f(String name, Matrix4f matrix) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(16);
+            matrix.get(buffer);
+            int location = glGetUniformLocation(id, name);
+            if (location != -1) {
+                glUniformMatrix4fv(location, false, buffer);
+            } else {
+                System.err.println("Warning: uniform '" + name + "' not found in shader program.");
+            }
+        }
     }
 
     @Override
