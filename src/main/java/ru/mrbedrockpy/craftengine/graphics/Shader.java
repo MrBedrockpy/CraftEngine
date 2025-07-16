@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL46C.*;
 
 @Getter
 @AllArgsConstructor
-public class Shader implements Disposable {
+public class Shader {
 
     private final int id;
 
@@ -89,7 +89,6 @@ public class Shader implements Disposable {
         }
     }
 
-    @Override
     public void dispose() {
         glDeleteProgram(id);
     }

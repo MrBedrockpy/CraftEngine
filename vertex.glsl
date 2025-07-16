@@ -14,5 +14,5 @@ void main() {
     position = attrib_Position;
     colour = attrib_Colour;
 
-    gl_Position = model * vec4(attrib_Position, 1.0);
+    gl_Position = projection * view * model * vec4(attrib_Position, 1.0);
 }

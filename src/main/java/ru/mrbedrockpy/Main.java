@@ -1,6 +1,5 @@
 package ru.mrbedrockpy;
 
-import ru.mrbedrockpy.craftengine.AbstractGame;
 import ru.mrbedrockpy.craftengine.window.WindowSettings;
 
 public class Main extends AbstractGame {
