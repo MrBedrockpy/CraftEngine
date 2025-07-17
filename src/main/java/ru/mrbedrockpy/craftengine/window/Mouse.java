@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Arrays;
+
 public class Mouse {
     private long window;
 
@@ -19,6 +21,9 @@ public class Mouse {
     @Setter
     private float sensitivity = 0.1f;
 
+    private final boolean[] mouseButtons = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
+    private final boolean[] mouseButtonsPressed = new boolean[GLFW.GLFW_MOUSE_BUTTON_LAST + 1];
+
     public Mouse(long window) {
         this.window = window;
 
@@ -29,6 +34,17 @@ public class Mouse {
         lastY = ypos[0];
 
         GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, GLFW.GLFW_CURSOR_DISABLED);
+
+        GLFW.glfwSetMouseButtonCallback(window, (win, button, action, mods) -> {
+            if (button >= 0 && button < mouseButtons.length) {
+                if (action == GLFW.GLFW_PRESS) {
+                    mouseButtons[button] = true;
+                    mouseButtonsPressed[button] = true;
+                } else if (action == GLFW.GLFW_RELEASE) {
+                    mouseButtons[button] = false;
+                }
+            }
+        });
     }
 
     public void update() {
@@ -50,6 +66,15 @@ public class Mouse {
 
         deltaX *= sensitivity;
         deltaY *= sensitivity;
+
+        Arrays.fill(mouseButtonsPressed, false);
     }
 
+    public boolean isButtonDown(int button) {
+        return mouseButtons[button];
+    }
+
+    public boolean isButtonClicked(int button) {
+        return mouseButtonsPressed[button];
+    }
 }

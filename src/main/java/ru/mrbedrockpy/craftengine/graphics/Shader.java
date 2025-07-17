@@ -3,6 +3,8 @@ package ru.mrbedrockpy.craftengine.graphics;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
+import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
@@ -89,7 +91,25 @@ public class Shader {
         }
     }
 
+    public void setUniform(String name, Vector4f value) {
+        int location = glGetUniformLocation(id, name);
+        if (location != -1) {
+            glUniform4f(location, value.x, value.y, value.z, value.w);
+        } else {
+            System.err.println("Uniform '" + name + "' not found in shader.");
+        }
+    }
+    public void setUniform(String name, Vector2f value) {
+        int location = glGetUniformLocation(id, name);
+        if (location != -1) {
+            glUniform2f(location, value.x, value.y);
+        } else {
+            System.err.println("Uniform '" + name + "' not found in shader.");
+        }
+    }
+
     public void dispose() {
         glDeleteProgram(id);
     }
+
 }

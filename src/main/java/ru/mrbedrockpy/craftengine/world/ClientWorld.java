@@ -3,30 +3,48 @@ package ru.mrbedrockpy.craftengine.world;
 import org.joml.Vector3f;
 import ru.mrbedrockpy.craftengine.graphics.Cuboid;
 import ru.mrbedrockpy.craftengine.window.Camera;
+import ru.mrbedrockpy.craftengine.world.block.Block;
 import ru.mrbedrockpy.craftengine.world.entity.ClientPlayerEntity;
+import ru.mrbedrockpy.craftengine.world.entity.LivingEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ClientWorld {
-    private WorldRenderer worldRenderer;
-    private Camera camera;
-    private final ClientPlayerEntity player;
-    public ClientWorld(ClientPlayerEntity player) {
-        this.camera = player.getCamera();
-        this.worldRenderer = new WorldRenderer(camera);
-        this.player = player;
+public class ClientWorld extends World {
+    private final WorldRenderer worldRenderer;
+    private final List<LivingEntity> entities = new ArrayList<>();
+
+    public ClientWorld(Camera camera, TickSystem tiker) {
+        this.worldRenderer = new WorldRenderer(camera, width, height, depth);
+        tiker.addListener(this::tick);
     }
 
+    public void tick(){
+        for (LivingEntity entity : entities) {
+            entity.tick();
+        }
+    }
+    @Override
     public void render() {
         worldRenderer.render();
     }
-
+    @Override
     public void generateWorld() {
-        for(int x = -10; x < 10; x++) {
-            for (int z = -10; z < 10; z++) {
-                Cuboid cuboid = new Cuboid(new Vector3f(x, 0, z), new Vector3f(1, 1, 1));
-                worldRenderer.addCuboid(cuboid);
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < depth; z++) {
+                setBlock(x, 0, z, new Block(true));
             }
+        }
+    }
+
+    @Override
+    public void setBlock(int x, int y, int z, Block block) {
+        super.setBlock(x, y, z, block);
+        if(block != null) {
+            Cuboid cuboid = new Cuboid(new Vector3f(x, y, z), new Vector3f(1, 1, 1));
+            worldRenderer.addCuboid(x, y, z, cuboid);
+        } else {
+            worldRenderer.removeCuboid(x, y, z);
         }
     }
 }
