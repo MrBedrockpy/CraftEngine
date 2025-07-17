@@ -16,19 +16,15 @@ public class CraftEngineClient {
     public static CraftEngineClient INSTANCE = new CraftEngineClient();
     public DrawContext context;
     public HudRenderer hudRenderer;
-    private Mouse mouse;
     public final EventManager eventManager = new EventManager();
-
-    private CraftEngineClient(){}
     private final FPSCounter fpsCounter = new FPSCounter();
     private ClientWorld clientWorld;
     private ClientPlayerEntity player;
     private final TickSystem tickSystem = new TickSystem(20);
 
+    private CraftEngineClient() {}
 
     public void run() {
-        Window.initialize(new WindowSettings(1920, 1080, "CraftEngine Client", true, false));
-        Input.initialize();
         this.initialize();
         long lastTime = System.nanoTime();
         while(!Window.isShouldClose()) {
@@ -45,14 +41,13 @@ public class CraftEngineClient {
     }
 
     public void initialize() {
-        mouse = new Mouse(Window.getWindow());
-        player = new ClientPlayerEntity(new Vector3f(5, 100, 5), mouse, clientWorld);
+        Window.initialize(new WindowSettings(1920, 1080, "CraftEngine Client", false, true));
+        Input.initialize();
+        player = new ClientPlayerEntity(new Vector3f(5, 100, 5), clientWorld);
         clientWorld = new ClientWorld(player.getCamera(), tickSystem);
         player.setWorld(clientWorld);
         clientWorld.generateWorld();
-        eventManager.addListener(MouseClickEvent.class, event -> {
-            player.onMouseClick(event.getButton(), event.getX(), event.getY());
-        });
+        eventManager.addListener(MouseClickEvent.class, player::onMouseClick);
         context = new DrawContext(Window.getWidth(), Window.getHeight());
         hudRenderer = new HudRenderer(Window.getWidth(), Window.getHeight());
         hudRenderer.texture = Texture.load("cursor.png");
@@ -65,13 +60,8 @@ public class CraftEngineClient {
         if(Input.jpressed(GLFW.GLFW_KEY_ESCAPE)) {
             Window.setShouldClose(true);
         }
-        if(Input.pressed(GLFW.GLFW_KEY_F11)) {
-            Window.toggleFullscreen();
-        }
-        if (mouse.isButtonClicked(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
-            double[] xpos = new double[1], ypos = new double[1];
-            GLFW.glfwGetCursorPos(Window.getWindow(), xpos, ypos);
-            MouseClickEvent clickEvent = new MouseClickEvent(GLFW.GLFW_MOUSE_BUTTON_LEFT, xpos[0], ypos[0]);
+        if (Input.jclicked(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+            MouseClickEvent clickEvent = new MouseClickEvent(GLFW.GLFW_MOUSE_BUTTON_LEFT, Input.getX(), Input.getY());
             eventManager.callEvent(clickEvent);
         }
         player.update(deltaTime, clientWorld);
@@ -81,9 +71,4 @@ public class CraftEngineClient {
         clientWorld.render();
         hudRenderer.render(context);
     }
-
-    public int getFPS() {
-        return fpsCounter.getFPS();
-    }
-
 }

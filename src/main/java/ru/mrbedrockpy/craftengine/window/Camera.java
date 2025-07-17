@@ -11,7 +11,7 @@ public class Camera {
     private final Vector3f position = new Vector3f(0,0,0);
     private final Vector2f angle = new Vector2f(0,0); // pitch (x), yaw (y)
 
-    private final float fov = (float) Math.toRadians(110.0);
+    private final float fov = (float) Math.toRadians(80.0);
     private final float aspectRatio = 16f / 9f;
     private final float zNear = 0.1f;
     private final float zFar = 1000f;

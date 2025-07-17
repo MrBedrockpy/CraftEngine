@@ -1,5 +1,8 @@
 package ru.mrbedrockpy.craftengine.window;
 
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.Arrays;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,13 +18,12 @@ public class Input {
 
     private static long current = 0;
 
-    private static double deltaX = 0f;
-    private static double deltaY = 0f;
+    @Getter private static double deltaX = 0f;
+    @Getter private static double deltaY = 0f;
 
-    private static double x = 0f;
-    private static double y = 0f;
+    @Getter private static double x = 0f;
+    @Getter private static double y = 0f;
 
-    private static boolean cursorLocked = false;
     private static boolean cursorStarted = false;
 
     private static void keyCallback(long window, int key, int scancode, int action, int mode) {
@@ -46,7 +48,7 @@ public class Input {
     }
 
     private static void cursorPosCallback(long window, double xpos, double ypos) {
-        if (cursorStarted){
+        if (cursorStarted) {
             deltaX += xpos - x;
             deltaY += ypos - y;
         }
@@ -75,6 +77,8 @@ public class Input {
         glfwSetMouseButtonCallback(window, Input::mouseButtonCallback);
         glfwSetCursorPosCallback(window, Input::cursorPosCallback);
         glfwSetWindowSizeCallback(window, Input::windowSizeCallback);
+
+        setCursorLocked(true);
     }
 
     public static void pullEvents() {
@@ -82,6 +86,10 @@ public class Input {
         deltaX = 0f;
         deltaY = 0f;
         glfwPollEvents();
+    }
+
+    public static void setCursorLocked(boolean flag) {
+        glfwSetInputMode(Window.getWindow(), GLFW_CURSOR, flag ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
     }
 
     public static boolean pressed(int key) {

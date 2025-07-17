@@ -3,9 +3,9 @@ package ru.mrbedrockpy.craftengine.world.entity;
 import lombok.Getter;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import ru.mrbedrockpy.craftengine.event.MouseClickEvent;
 import ru.mrbedrockpy.craftengine.window.Camera;
 import ru.mrbedrockpy.craftengine.window.Input;
-import ru.mrbedrockpy.craftengine.window.Mouse;
 import ru.mrbedrockpy.craftengine.world.ClientWorld;
 import ru.mrbedrockpy.craftengine.world.raycast.BlockRaycastResult;
 
@@ -14,21 +14,21 @@ import static org.lwjgl.glfw.GLFW.*;
 public class ClientPlayerEntity extends LivingEntity {
     @Getter
     private final Camera camera = new Camera();
-    @Getter
-    private final Mouse mouse;
-    private final float speed = 0.03f;
+    private final float speed = 0.06f;
+    private final float sensitivity = 5.0f;
 
-    public ClientPlayerEntity(Vector3f position, Mouse mouse, ClientWorld world) {
+    public ClientPlayerEntity(Vector3f position, ClientWorld world) {
         super(position, new Vector3f(1, 2, 1), world);
-        this.mouse = mouse;
         this.camera.setPosition(position.add(0, 1.8f, 0));
     }
 
     @Override
     public void update(float deltaTime, ClientWorld world) {
         super.update(deltaTime, world);
-        mouse.update();
-        camera.rotate(new Vector2f(mouse.getDeltaY(), mouse.getDeltaX()));
+        camera.rotate(new Vector2f(
+                (float) -Input.getDeltaY() * sensitivity * deltaTime,
+                (float) Input.getDeltaX() * sensitivity * deltaTime
+        ));
 
         Vector3f direction = new Vector3f();
         Vector3f front = camera.getFlatFront();
@@ -53,14 +53,13 @@ public class ClientPlayerEntity extends LivingEntity {
     }
 
 
-    public void onMouseClick(int button, double x, double y) {
-        if (button == GLFW_MOUSE_BUTTON_LEFT) {
+    public void onMouseClick(MouseClickEvent event) {
+        if (event.getButton() == GLFW_MOUSE_BUTTON_LEFT) {
             Vector3f eyePos = new Vector3f(position.x, position.y + 1.8f, position.z);
             BlockRaycastResult blockRaycastResult = world.raycast(eyePos, camera.getFront(), 4.5f);
             if(blockRaycastResult != null){
                 world.setBlock(blockRaycastResult.x, blockRaycastResult.y, blockRaycastResult.z, null);
             }
-        } else if (button == GLFW_MOUSE_BUTTON_RIGHT) {
-        }
+        } else if (event.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {}
     }
 }

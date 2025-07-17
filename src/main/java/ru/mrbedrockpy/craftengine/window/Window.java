@@ -58,8 +58,7 @@ public class Window {
         }
 
         glfwMakeContextCurrent(window);
-        if (vsync) toggleVsync();
-        if (fullscreen) toggleFullscreen();
+        setVsync(vsync);
         glfwShowWindow(window);
         GL.createCapabilities();
         glEnable(GL_DEPTH_TEST);
@@ -102,16 +101,7 @@ public class Window {
         Window.title = title;
     }
 
-    public static void toggleVsync() {
-        glfwSwapInterval(vsync ? 1 : 0);
-        vsync = !vsync;
-    }
-
-    public static void toggleFullscreen() {
-        long monitor = glfwGetPrimaryMonitor();
-        GLFWVidMode videoMode = glfwGetVideoMode(monitor);
-        if (videoMode == null) return;
-        glfwSetWindowMonitor(window, monitor, 0, 0, videoMode.width(), videoMode.height(), videoMode.refreshRate());
-        fullscreen = !fullscreen;
+    public static void setVsync(boolean flag) {
+        glfwSwapInterval(flag ? 1 : 0);
     }
 }
