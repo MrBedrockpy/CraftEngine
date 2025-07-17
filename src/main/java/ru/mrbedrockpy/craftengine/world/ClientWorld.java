@@ -12,13 +12,14 @@ import java.util.List;
 
 public class ClientWorld extends World {
     private final WorldRenderer worldRenderer;
-    public ClientWorld(Camera camera, TickSystem tiker) {
-        this.worldRenderer = new WorldRenderer(camera, width, height, depth);
-        tiker.addListener(this::tick);
+    private final ClientPlayerEntity player;
+    public ClientWorld(ClientPlayerEntity player, TickSystem ticker) {
+        this.player = player;
+        this.worldRenderer = new WorldRenderer(player.getCamera(), width, height, depth);
+        ticker.addListener(this::tick);
     }
-    @Override
     public void render() {
-        worldRenderer.render(this);
+        worldRenderer.render(this, player);
     }
     @Override
     public void generateWorld() {

@@ -2,9 +2,11 @@ package ru.mrbedrockpy.craftengine.world;
 
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import ru.mrbedrockpy.craftengine.CraftEngineClient;
 import ru.mrbedrockpy.craftengine.graphics.Cuboid;
 import ru.mrbedrockpy.craftengine.window.Camera;
 import ru.mrbedrockpy.craftengine.world.block.Block;
+import ru.mrbedrockpy.craftengine.world.entity.ClientPlayerEntity;
 import ru.mrbedrockpy.craftengine.world.raycast.BlockRaycastResult;
 
 import java.util.ArrayList;
@@ -48,8 +50,8 @@ public class WorldRenderer {
             && z >= 0 && z < depth;
     }
 
-    public void render(World world) {
-        updateSelectedBlock(world);
+    public void render(World world, ClientPlayerEntity player) {
+        updateSelectedBlock(world, player);
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 for (int z = 0; z < depth; z++) {
@@ -78,8 +80,8 @@ public class WorldRenderer {
         }
 
     }
-    public void updateSelectedBlock(World world) {
-            Vector3f origin = new Vector3f(camera.getPosition()).add(0, 1.8f, 0);
+    public void updateSelectedBlock(World world, ClientPlayerEntity player) {
+            Vector3f origin = new Vector3f(camera.getPosition()).add(0.5f, 0.5f + player.getEyeOffset(), 0.5f);
             Vector3f direction = camera.getFront();
 
             BlockRaycastResult blockRaycastResult = world.raycast(origin, direction, 4.5f);

@@ -3,10 +3,12 @@ package ru.mrbedrockpy.craftengine.world.entity;
 import lombok.Getter;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector3i;
 import ru.mrbedrockpy.craftengine.event.MouseClickEvent;
 import ru.mrbedrockpy.craftengine.window.Camera;
 import ru.mrbedrockpy.craftengine.window.Input;
 import ru.mrbedrockpy.craftengine.world.ClientWorld;
+import ru.mrbedrockpy.craftengine.world.block.Block;
 import ru.mrbedrockpy.craftengine.world.raycast.BlockRaycastResult;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -16,6 +18,8 @@ public class ClientPlayerEntity extends LivingEntity {
     private final Camera camera = new Camera();
     private final float speed = 0.045f;
     private final float sensitivity = 20.0f;
+    @Getter
+    private final float eyeOffset = 1.8f;
 
     public ClientPlayerEntity(Vector3f position, ClientWorld world) {
         super(position, new Vector3f(1, 2, 1), world);
@@ -55,11 +59,31 @@ public class ClientPlayerEntity extends LivingEntity {
 
     public void onMouseClick(MouseClickEvent event) {
         if (event.getButton() == GLFW_MOUSE_BUTTON_LEFT) {
-            Vector3f eyePos = new Vector3f(position.x, position.y + 1.8f, position.z);
-            BlockRaycastResult blockRaycastResult = world.raycast(eyePos, camera.getFront(), 4.5f);
+            BlockRaycastResult blockRaycastResult = world.raycast(camera.getPosition().add(0.5f, 0.5f + eyeOffset, 0.5f), camera.getFront(), 4.5f);
             if(blockRaycastResult != null){
                 world.setBlock(blockRaycastResult.x, blockRaycastResult.y, blockRaycastResult.z, null);
             }
-        } else if (event.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {}
+        } else if (event.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {
+            // TODO: пофиксить это
+            BlockRaycastResult blockRaycastResult = world.raycast(camera.getPosition().add(0.5f, 0.5f + eyeOffset, 0.5f), camera.getFront(), 4.5f);
+            if(blockRaycastResult != null){
+                Vector3i offset = getOffsetFromDirection(blockRaycastResult.direction);
+                Vector3i blockPos = new Vector3i(blockRaycastResult.x, blockRaycastResult.y, blockRaycastResult.z).add(offset);
+                Vector3i finalPos = blockPos.add(offset);
+                world.setBlock(finalPos.x, finalPos.y, finalPos.z, new Block(true));
+            }
+        }
+    }
+    // TODO: вынести в отдельный класс, например, BlockUtils
+    public Vector3i getOffsetFromDirection(Block.Direction dir) {
+        return switch (dir) {
+            case UP    -> new Vector3i(0, 1, 0);
+            case DOWN  -> new Vector3i(0, -1, 0);
+            case NORTH -> new Vector3i(0, 0, -1);
+            case SOUTH -> new Vector3i(0, 0, 1);
+            case EAST  -> new Vector3i(1, 0, 0);
+            case WEST  -> new Vector3i(-1, 0, 0);
+            default    -> new Vector3i(0, 0, 0);
+        };
     }
 }

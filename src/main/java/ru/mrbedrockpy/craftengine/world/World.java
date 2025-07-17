@@ -28,7 +28,6 @@ public abstract class World {
         entities.add(entity);
     }
 
-    public abstract void render();
     public abstract void generateWorld();
     public Block getBlock(int x, int y, int z) {
         if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) return null;
@@ -41,9 +40,9 @@ public abstract class World {
     }
 
     public BlockRaycastResult raycast(Vector3f originF, Vector3f directionF, float maxDistanceF) {
+
         Vector3d origin = new Vector3d(originF.x, originF.y, originF.z);
         Vector3d direction = new Vector3d(directionF.x, directionF.y, directionF.z);
-        direction.normalize();
 
         Vector3d pos = new Vector3d(origin);
         Vector3i blockPos = new Vector3i(
@@ -85,7 +84,7 @@ public abstract class World {
             return new BlockRaycastResult(blockPos.x, blockPos.y, blockPos.z, block, lastFace);
         }
 
-        while (distance <= maxDistance + 1e-6) {
+        while (distance <= maxDistance) {
             if (sideDistX < sideDistY) {
                 if (sideDistX < sideDistZ) {
                     blockPos.x += stepX;
@@ -96,7 +95,7 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH;
+                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH; // ← тут было наоборот
                 }
             } else {
                 if (sideDistY < sideDistZ) {
@@ -108,11 +107,12 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH;
+                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH; // ← и тут
                 }
             }
-
-            if (distance > maxDistance + 1e-6) break;
+            if (distance > maxDistance) {
+                break;
+            }
 
             block = getBlock(blockPos.x, blockPos.y, blockPos.z);
             if (block != null && block.isSolid()) {
@@ -122,4 +122,5 @@ public abstract class World {
 
         return null;
     }
+
 }
