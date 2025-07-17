@@ -14,8 +14,8 @@ import static org.lwjgl.glfw.GLFW.*;
 public class ClientPlayerEntity extends LivingEntity {
     @Getter
     private final Camera camera = new Camera();
-    private final float speed = 0.06f;
-    private final float sensitivity = 5.0f;
+    private final float speed = 0.045f;
+    private final float sensitivity = 20.0f;
 
     public ClientPlayerEntity(Vector3f position, ClientWorld world) {
         super(position, new Vector3f(1, 2, 1), world);
