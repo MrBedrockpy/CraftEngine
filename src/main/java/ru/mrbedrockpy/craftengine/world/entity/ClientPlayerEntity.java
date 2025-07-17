@@ -64,13 +64,11 @@ public class ClientPlayerEntity extends LivingEntity {
                 world.setBlock(blockRaycastResult.x, blockRaycastResult.y, blockRaycastResult.z, null);
             }
         } else if (event.getButton() == GLFW_MOUSE_BUTTON_RIGHT) {
-            // TODO: пофиксить это
             BlockRaycastResult blockRaycastResult = world.raycast(camera.getPosition().add(0.5f, 0.5f + eyeOffset, 0.5f), camera.getFront(), 4.5f);
             if(blockRaycastResult != null){
                 Vector3i offset = getOffsetFromDirection(blockRaycastResult.direction);
                 Vector3i blockPos = new Vector3i(blockRaycastResult.x, blockRaycastResult.y, blockRaycastResult.z).add(offset);
-                Vector3i finalPos = blockPos.add(offset);
-                world.setBlock(finalPos.x, finalPos.y, finalPos.z, new Block(true));
+                world.setBlock(blockPos.x, blockPos.y, blockPos.z, new Block(true));
             }
         }
     }

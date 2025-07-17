@@ -62,8 +62,12 @@ public class CraftEngineClient {
         if(Input.jpressed(GLFW.GLFW_KEY_ESCAPE)) {
             Window.setShouldClose(true);
         }
-        if (Input.jclicked(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
+        if(Input.jclicked(GLFW.GLFW_MOUSE_BUTTON_LEFT)) {
             MouseClickEvent clickEvent = new MouseClickEvent(GLFW.GLFW_MOUSE_BUTTON_LEFT, Input.getX(), Input.getY());
+            eventManager.callEvent(clickEvent);
+        }
+        if(Input.jclicked(GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+            MouseClickEvent clickEvent = new MouseClickEvent(GLFW.GLFW_MOUSE_BUTTON_RIGHT, Input.getX(), Input.getY());
             eventManager.callEvent(clickEvent);
         }
         player.update(deltaTime, clientWorld);
