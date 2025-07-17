@@ -1,14 +1,10 @@
 package ru.mrbedrockpy.craftengine.graphics;
 
 import org.joml.Matrix4f;
-import org.lwjgl.system.MemoryUtil;
-import ru.mrbedrockpy.craftengine.window.Camera;
-
-import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL46C.*;
 
-public class Mesh {
+public class OutlineMesh {
 
     private final int vaoId;
     private final int vboId;
@@ -16,10 +12,10 @@ public class Mesh {
 
     private final Shader shader;
 
-    public Mesh(float[] positions, float[] texCoords) {
+    public OutlineMesh(float[] positions, float[] texCoords) {
         this.vertexCount = positions.length / 3;
 
-        shader = Shader.load("vertex.glsl", "fragment.glsl");
+        shader = Shader.load("outline_vertex.glsl", "outline_fragment.glsl");
 
         vaoId = glGenVertexArrays();
         glBindVertexArray(vaoId);

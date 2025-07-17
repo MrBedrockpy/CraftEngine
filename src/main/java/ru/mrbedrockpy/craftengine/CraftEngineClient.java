@@ -46,7 +46,7 @@ public class CraftEngineClient {
 
     public void initialize() {
         mouse = new Mouse(Window.getWindow());
-        player = new ClientPlayerEntity(new Vector3f(5, 10, 5), mouse, clientWorld);
+        player = new ClientPlayerEntity(new Vector3f(5, 100, 5), mouse, clientWorld);
         clientWorld = new ClientWorld(player.getCamera(), tickSystem);
         player.setWorld(clientWorld);
         clientWorld.generateWorld();

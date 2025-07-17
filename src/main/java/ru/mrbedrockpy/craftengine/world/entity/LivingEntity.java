@@ -7,6 +7,7 @@ import ru.mrbedrockpy.craftengine.window.Camera;
 import ru.mrbedrockpy.craftengine.world.ClientWorld;
 import ru.mrbedrockpy.craftengine.world.World;
 
+// TODO: Add normal collision detection
 public abstract class LivingEntity {
     @Getter
     protected Vector3f position = new Vector3f();

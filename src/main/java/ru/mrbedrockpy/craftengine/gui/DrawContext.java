@@ -6,6 +6,7 @@ import ru.mrbedrockpy.craftengine.graphics.Texture;
 
 import static org.lwjgl.opengl.GL46C.*;
 
+// TODO: Add text rendering capabilities
 public class DrawContext {
     private final Shader uiShader;
     private final int screenWidth;

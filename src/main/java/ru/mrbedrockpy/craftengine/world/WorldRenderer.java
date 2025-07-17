@@ -78,7 +78,7 @@ public class WorldRenderer {
         }
 
     }
-    // TODO: fix block outline rendering
+
     public void updateSelectedBlock(World world) {
             Vector3f origin = new Vector3f(camera.getPosition()).add(0, 1.8f, 0);
             Vector3f direction = camera.getFront();
