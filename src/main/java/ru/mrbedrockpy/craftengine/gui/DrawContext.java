@@ -40,7 +40,7 @@ public class DrawContext {
         glBindVertexArray(0);
     }
 
-    public void drawTexture(float x, float y, float width, float height, Texture texture) {
+    public void drawTexture(int x, int y, float width, float height, Texture texture) {
         float[] vertices = {
                 x,          y,          0.0f, 0.0f,
                 x + width,  y,          1.0f, 0.0f,

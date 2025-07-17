@@ -8,8 +8,10 @@ import org.joml.Vector4f;
 import org.lwjgl.system.MemoryStack;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -36,23 +38,27 @@ public class Shader {
         return new Shader(programID);
     }
 
-    private static int compileShader(String filePath, int shaderType) {
+    private static int compileShader(String resourcePath, int shaderType) {
         String shaderCode;
-        try {
-            shaderCode = new String(Files.readAllBytes(Paths.get(filePath)));
+        try (InputStream is = Shader.class.getResourceAsStream("/" + resourcePath)) {
+            if (is == null) throw new RuntimeException("Shader resource not found: " + resourcePath);
+            byte[] bytes = is.readAllBytes();
+            shaderCode = new String(bytes, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load shader file: " + filePath, e);
+            throw new RuntimeException("Failed to load shader resource: " + resourcePath, e);
         }
+
         int shaderID = glCreateShader(shaderType);
-        if (shaderID == 0) throw new RuntimeException("Shader creation failed for: " + filePath);
+        if (shaderID == 0) throw new RuntimeException("Shader creation failed for: " + resourcePath);
         glShaderSource(shaderID, shaderCode);
         glCompileShader(shaderID);
+
         try (MemoryStack stack = MemoryStack.stackPush()) {
             IntBuffer success = stack.mallocInt(1);
             glGetShaderiv(shaderID, GL_COMPILE_STATUS, success);
             if (success.get(0) == GL_FALSE) {
                 String log = glGetShaderInfoLog(shaderID);
-                throw new RuntimeException("Shader compilation failed: " + filePath + "\n" + log);
+                throw new RuntimeException("Shader compilation failed: " + resourcePath + "\n" + log);
             }
         }
         return shaderID;
@@ -83,33 +89,12 @@ public class Shader {
             FloatBuffer buffer = stack.mallocFloat(16);
             matrix.get(buffer);
             int location = glGetUniformLocation(id, name);
-            if (location != -1) {
-                glUniformMatrix4fv(location, false, buffer);
-            } else {
-                System.err.println("Warning: uniform '" + name + "' not found in shader program.");
-            }
-        }
-    }
-
-    public void setUniform(String name, Vector4f value) {
-        int location = glGetUniformLocation(id, name);
-        if (location != -1) {
-            glUniform4f(location, value.x, value.y, value.z, value.w);
-        } else {
-            System.err.println("Uniform '" + name + "' not found in shader.");
-        }
-    }
-    public void setUniform(String name, Vector2f value) {
-        int location = glGetUniformLocation(id, name);
-        if (location != -1) {
-            glUniform2f(location, value.x, value.y);
-        } else {
-            System.err.println("Uniform '" + name + "' not found in shader.");
+            if (location != -1) glUniformMatrix4fv(location, false, buffer);
+            else System.err.println("Warning: uniform '" + name + "' not found in shader program.");
         }
     }
 
     public void dispose() {
         glDeleteProgram(id);
     }
-
 }

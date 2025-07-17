@@ -12,17 +12,9 @@ import java.util.List;
 
 public class ClientWorld extends World {
     private final WorldRenderer worldRenderer;
-    private final List<LivingEntity> entities = new ArrayList<>();
-
     public ClientWorld(Camera camera, TickSystem tiker) {
         this.worldRenderer = new WorldRenderer(camera, width, height, depth);
         tiker.addListener(this::tick);
-    }
-
-    public void tick(){
-        for (LivingEntity entity : entities) {
-            entity.tick();
-        }
     }
     @Override
     public void render() {

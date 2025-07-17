@@ -17,7 +17,7 @@ public class CraftEngineClient {
     public DrawContext context;
     public HudRenderer hudRenderer;
     private Mouse mouse;
-    public static final EventManager eventManager = new EventManager();
+    public final EventManager eventManager = new EventManager();
 
     private CraftEngineClient(){}
     private final FPSCounter fpsCounter = new FPSCounter();
