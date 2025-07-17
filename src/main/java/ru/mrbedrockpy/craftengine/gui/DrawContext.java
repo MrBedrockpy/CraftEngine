@@ -42,15 +42,14 @@ public class DrawContext {
 
     public void drawTexture(int x, int y, float width, float height, Texture texture) {
         float[] vertices = {
-                x,          y,          0.0f, 0.0f,
-                x + width,  y,          1.0f, 0.0f,
-                x + width,  y + height, 1.0f, 1.0f,
+                x,          y,          0.0f, 1.0f,
+                x + width,  y,          1.0f, 1.0f,
+                x + width,  y + height, 1.0f, 0.0f,
 
-                x,          y,          0.0f, 0.0f,
-                x + width,  y + height, 1.0f, 1.0f,
-                x,          y + height, 0.0f, 1.0f
+                x,          y,          0.0f, 1.0f,
+                x + width,  y + height, 1.0f, 0.0f,
+                x,          y + height, 0.0f, 0.0f
         };
-
         glBindBuffer(GL_ARRAY_BUFFER, vboId);
         glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
 

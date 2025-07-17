@@ -56,6 +56,7 @@ public class CraftEngineClient {
         context = new DrawContext(Window.getWidth(), Window.getHeight());
         hudRenderer = new HudRenderer(Window.getWidth(), Window.getHeight());
         hudRenderer.texture = Texture.load("cursor.png");
+        hudRenderer.hudTexture = Texture.load("hotbar.png");
     }
 
     private void update(float deltaTime) {

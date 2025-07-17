@@ -18,6 +18,12 @@ public abstract class LivingEntity {
     protected int yaw;
     protected World world;
 
+    private boolean onGround = false;
+
+    // Minecraft-like gravity
+    private final float gravity = -25f;
+    private final float jumpStrength = 10.0f;
+
     public LivingEntity(Vector3f position, Vector3f size, World world) {
         this.position.set(position);
         this.size.set(size);
@@ -44,11 +50,6 @@ public abstract class LivingEntity {
         }
     }
     public abstract void render(Camera camera);
-
-    private boolean onGround = false;
-    // Minecraft-like gravity
-    private final float gravity = -25f;
-    private final float jumpStrength = 10.0f;
 
     public void tick() {
     }
