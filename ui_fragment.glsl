@@ -1,7 +1,10 @@
 #version 460 core
-uniform vec4 uColor;
-out vec4 FragColor;
+
+in vec2 fragUV;
+out vec4 fragColor;
+
+uniform sampler2D uiTexture;
 
 void main() {
-    FragColor = uColor;
+    fragColor = texture(uiTexture, fragUV);
 }

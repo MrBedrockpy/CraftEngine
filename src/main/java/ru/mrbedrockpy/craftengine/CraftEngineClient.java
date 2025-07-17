@@ -4,6 +4,7 @@ import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import ru.mrbedrockpy.craftengine.event.EventManager;
 import ru.mrbedrockpy.craftengine.event.MouseClickEvent;
+import ru.mrbedrockpy.craftengine.graphics.Texture;
 import ru.mrbedrockpy.craftengine.gui.DrawContext;
 import ru.mrbedrockpy.craftengine.gui.HudRenderer;
 import ru.mrbedrockpy.craftengine.window.*;
@@ -45,7 +46,7 @@ public class CraftEngineClient {
 
     public void initialize() {
         mouse = new Mouse(Window.getWindow());
-        player = new ClientPlayerEntity(new Vector3f(0, 2, 0), mouse, clientWorld);
+        player = new ClientPlayerEntity(new Vector3f(5, 10, 5), mouse, clientWorld);
         clientWorld = new ClientWorld(player.getCamera(), tickSystem);
         player.setWorld(clientWorld);
         clientWorld.generateWorld();
@@ -54,6 +55,7 @@ public class CraftEngineClient {
         });
         context = new DrawContext(Window.getWidth(), Window.getHeight());
         hudRenderer = new HudRenderer(Window.getWidth(), Window.getHeight());
+        hudRenderer.texture = Texture.load("cursor.png");
     }
 
     private void update(float deltaTime) {

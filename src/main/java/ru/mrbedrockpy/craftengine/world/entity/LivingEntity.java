@@ -27,6 +27,8 @@ public abstract class LivingEntity {
         this.world = world;
         this.world.addEntity(this);
     }
+
+    // TODO: Fix entity physics
     public void update(float deltaTime, ClientWorld world){
         if (!onGround) {
             velocity.y += gravity * deltaTime;

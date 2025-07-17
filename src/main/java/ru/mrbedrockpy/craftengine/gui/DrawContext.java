@@ -1,110 +1,82 @@
 package ru.mrbedrockpy.craftengine.gui;
 
-import org.joml.Vector2f;
-import org.joml.Vector4f;
-import org.lwjgl.system.MemoryUtil;
+import org.joml.Matrix4f;
 import ru.mrbedrockpy.craftengine.graphics.Shader;
-
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import ru.mrbedrockpy.craftengine.graphics.Texture;
 
 import static org.lwjgl.opengl.GL46C.*;
 
-// TODO: Fix it
 public class DrawContext {
     private final Shader uiShader;
     private final int screenWidth;
     private final int screenHeight;
 
-    private int quadVaoId;
-    private int quadVboId;
-    private int quadEboId;
+    private int vaoId;
+    private int vboId;
+
+    private final Matrix4f projection;
 
     public DrawContext(int screenWidth, int screenHeight) {
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
 
         uiShader = Shader.load("ui_vertex.glsl", "ui_fragment.glsl");
-        initQuad();
-    }
 
-    private void initQuad() {
-        float[] vertices = {
-            -0.5f, -0.5f, 0.0f, 0.0f,
-             0.5f, -0.5f, 1.0f, 0.0f,
-             0.5f,  0.5f, 1.0f, 1.0f,
-            -0.5f,  0.5f, 0.0f, 1.0f
-        };
+        projection = new Matrix4f().ortho(0.0f, screenWidth, screenHeight, 0.0f, -1.0f, 1.0f);
 
-        int[] indices = {
-            0, 1, 2,
-            2, 3, 0
-        };
+        vaoId = glGenVertexArrays();
+        vboId = glGenBuffers();
 
-        FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(vertices.length);
-        vertexBuffer.put(vertices).flip();
+        glBindVertexArray(vaoId);
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBufferData(GL_ARRAY_BUFFER, 6 * 4 * Float.BYTES, GL_DYNAMIC_DRAW);
 
-        IntBuffer indexBuffer = MemoryUtil.memAllocInt(indices.length);
-        indexBuffer.put(indices).flip();
-
-        quadVaoId = glGenVertexArrays();
-        quadVboId = glGenBuffers();
-        quadEboId = glGenBuffers();
-
-        glBindVertexArray(quadVaoId);
-
-        glBindBuffer(GL_ARRAY_BUFFER, quadVboId);
-        glBufferData(GL_ARRAY_BUFFER, vertexBuffer, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, quadEboId);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL_STATIC_DRAW);
-
-        glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
-
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
+        glEnableVertexAttribArray(1);
 
         glBindVertexArray(0);
-
-        MemoryUtil.memFree(vertexBuffer);
-        MemoryUtil.memFree(indexBuffer);
     }
 
-    private Vector2f pixelToNDC(float x, float y) {
-        float ndcX = (2.0f * x) / screenWidth - 1.0f;
-        float ndcY = 1.0f - (2.0f * y) / screenHeight;
-        return new Vector2f(ndcX, ndcY);
-    }
+    public void drawTexture(float x, float y, float width, float height, Texture texture) {
+        float[] vertices = {
+                x,          y,          0.0f, 0.0f,
+                x + width,  y,          1.0f, 0.0f,
+                x + width,  y + height, 1.0f, 1.0f,
 
-    public void drawRect(int x, int y, float width, float height, Vector4f color) {
+                x,          y,          0.0f, 0.0f,
+                x + width,  y + height, 1.0f, 1.0f,
+                x,          y + height, 0.0f, 1.0f
+        };
+
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, vertices);
+
         glDisable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         uiShader.use();
+        uiShader.setUniformMatrix4f("projection", projection);
 
-        float centerX = x + width / 2.0f;
-        float centerY = y + height / 2.0f;
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, texture.getId());
 
-        Vector2f pos = pixelToNDC(centerX, centerY);
-        Vector2f size = new Vector2f(
-                2.0f * width / screenWidth,
-                2.0f * height / screenHeight
-        );
-
-        uiShader.setUniform("uColor", color);
-        uiShader.setUniform("uPosition", pos);
-        uiShader.setUniform("uSize", size);
-
-        glBindVertexArray(quadVaoId);
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(vaoId);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
         glBindVertexArray(0);
 
+        texture.unbind();
+        uiShader.unbind();
+
+        glDisable(GL_BLEND);
         glEnable(GL_DEPTH_TEST);
     }
 
     public void cleanup() {
-        glDeleteBuffers(quadVboId);
-        glDeleteBuffers(quadEboId);
-        glDeleteVertexArrays(quadVaoId);
+        glDeleteVertexArrays(vaoId);
+        glDeleteBuffers(vboId);
         uiShader.dispose();
     }
 }

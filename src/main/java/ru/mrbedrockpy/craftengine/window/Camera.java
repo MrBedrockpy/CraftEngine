@@ -90,4 +90,29 @@ public class Camera {
         viewMatrix.lookAt(eyePosition, center, up);
     }
 
+    public Vector3f getFront() {
+        float yaw = (float) Math.toRadians(angle.y);
+        float pitch = (float) Math.toRadians(angle.x);
+
+        Vector3f front = new Vector3f();
+        front.x = (float) (Math.cos(pitch) * Math.cos(yaw));
+        front.y = (float) Math.sin(pitch);
+        front.z = (float) (Math.cos(pitch) * Math.sin(yaw));
+
+        return front.normalize();
+    }
+
+
+    public Vector3f getFlatFront() {
+        float yaw = (float) Math.toRadians(angle.y);
+
+        Vector3f front = new Vector3f();
+        front.x = (float) Math.sin(yaw);
+        front.z = (float) -Math.cos(yaw);
+        front.y = 0;
+
+        return front.normalize();
+    }
+
+
 }

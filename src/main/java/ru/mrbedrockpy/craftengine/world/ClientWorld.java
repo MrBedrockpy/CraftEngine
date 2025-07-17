@@ -26,7 +26,7 @@ public class ClientWorld extends World {
     }
     @Override
     public void render() {
-        worldRenderer.render();
+        worldRenderer.render(this);
     }
     @Override
     public void generateWorld() {
@@ -34,17 +34,6 @@ public class ClientWorld extends World {
             for (int z = 0; z < depth; z++) {
                 setBlock(x, 0, z, new Block(true));
             }
-        }
-    }
-
-    @Override
-    public void setBlock(int x, int y, int z, Block block) {
-        super.setBlock(x, y, z, block);
-        if(block != null) {
-            Cuboid cuboid = new Cuboid(new Vector3f(x, y, z), new Vector3f(1, 1, 1));
-            worldRenderer.addCuboid(x, y, z, cuboid);
-        } else {
-            worldRenderer.removeCuboid(x, y, z);
         }
     }
 }
