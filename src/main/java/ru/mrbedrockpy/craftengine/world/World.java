@@ -4,6 +4,7 @@ import lombok.Getter;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
+import ru.mrbedrockpy.craftengine.phys.AABB;
 import ru.mrbedrockpy.craftengine.world.block.Block;
 import ru.mrbedrockpy.craftengine.world.entity.LivingEntity;
 import ru.mrbedrockpy.craftengine.world.raycast.BlockRaycastResult;
@@ -38,6 +39,7 @@ public abstract class World {
         if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) return;
         blocks[x][y][z] = block;
     }
+
 
     public BlockRaycastResult raycast(Vector3f originF, Vector3f directionF, float maxDistanceF) {
 
@@ -107,7 +109,7 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH; // ← и тут
+                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH; // ← и тут
                 }
             }
             if (distance > maxDistance) {
@@ -122,5 +124,45 @@ public abstract class World {
 
         return null;
     }
+
+    public ArrayList<AABB> getCubes(AABB boundingBox) {
+        ArrayList<AABB> boundingBoxList = new ArrayList<>();
+
+        int minX = (int) (Math.floor(boundingBox.minX) - 1);
+        int maxX = (int) (Math.ceil(boundingBox.maxX) + 1);
+        int minY = (int) (Math.floor(boundingBox.minY) - 1);
+        int maxY = (int) (Math.ceil(boundingBox.maxY) + 1);
+        int minZ = (int) (Math.floor(boundingBox.minZ) - 1);
+        int maxZ = (int) (Math.ceil(boundingBox.maxZ) + 1);
+
+        // Minimum level position
+        minX = Math.max(0, minX);
+        minY = Math.max(0, minY);
+        minZ = Math.max(0, minZ);
+
+        // Maximum level position
+        maxX = Math.min(this.width, maxX);
+        maxY = Math.min(this.depth, maxY);
+        maxZ = Math.min(this.height, maxZ);
+
+        // Include all surrounding tiles
+        for (int x = minX; x < maxX; x++) {
+            for (int y = minY; y < maxY; y++) {
+                for (int z = minZ; z < maxZ; z++) {
+
+                    Block block = getBlock(x, y, z);
+                    if (block != null) {
+
+                        AABB aabb = block.getAABB(x, y, z);
+                        if (aabb != null) {
+                            boundingBoxList.add(aabb);
+                        }
+                    }
+                }
+            }
+        }
+        return boundingBoxList;
+    }
+
 
 }
