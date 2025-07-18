@@ -81,7 +81,7 @@ public class WorldRenderer {
 
     }
     public void updateSelectedBlock(World world, ClientPlayerEntity player) {
-        Vector3f origin = new Vector3f(camera.getPosition()).add(0.5f, 0.5f + player.getEyeOffset(), 0.5f);
+        Vector3f origin = new Vector3f(camera.getPosition()).add(0, player.getEyeOffset(), 0);
         Vector3f direction = camera.getFront();
 
         BlockRaycastResult blockRaycastResult = world.raycast(origin, direction, 4.5f);

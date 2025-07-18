@@ -28,12 +28,11 @@ public abstract class LivingEntity {
 
     private final float jumpStrength = 0.7f;
     public AABB boundingBox;
-    protected Vector2f boundingBoxSize = new Vector2f(0.6f, 1.8f);
 
     public LivingEntity(Vector3f position, Vector3f size, World world) {
-        setPosition(position);
         this.size.set(size);
         this.world = world;
+        setPosition(position);
     }
 
     public void setWorld(World world){
