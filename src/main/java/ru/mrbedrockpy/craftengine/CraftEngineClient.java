@@ -18,10 +18,9 @@ public class CraftEngineClient {
     private DrawContext context;
     public HudRenderer hudRenderer;
     public final EventManager eventManager = new EventManager();
-    private final FPSCounter fpsCounter = new FPSCounter();
+    @Getter private final FPSCounter fpsCounter = new FPSCounter();
     private ClientWorld clientWorld;
-    @Getter
-    private ClientPlayerEntity player;
+    @Getter private ClientPlayerEntity player;
     private final TickSystem tickSystem = new TickSystem(20);
 
     private CraftEngineClient() {}
