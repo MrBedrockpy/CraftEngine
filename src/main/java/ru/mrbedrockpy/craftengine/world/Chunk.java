@@ -6,6 +6,7 @@ import org.joml.Vector3f;
 import org.joml.Vector3i;
 import ru.mrbedrockpy.craftengine.graphics.Cuboid;
 import ru.mrbedrockpy.craftengine.graphics.Mesh;
+import ru.mrbedrockpy.craftengine.graphics.MeshBuilder;
 import ru.mrbedrockpy.craftengine.world.block.Block;
 import ru.mrbedrockpy.craftengine.world.entity.LivingEntity;
 
@@ -40,6 +41,10 @@ public class Chunk {
         }
     }
 
+    public Block getBlock(Vector3i pos) {
+        return getBlock(pos.x, pos.y, pos.z);
+    }
+
     public boolean setBlock(int x, int y, int z, Block block) {
         try {
            blocks[x][y][z] = block;
@@ -55,38 +60,36 @@ public class Chunk {
         }
     }
 
-    public void setEntities(List<LivingEntity> entities) {
-        this.entities.clear();
-        this.entities.addAll(entities);
-    }
-
     public Mesh getChunkMesh() {
-        List<Float> verticesList = new ArrayList<>();
-        List<Float> texCoordsList = new ArrayList<>();
-        for(int x = 0; x < WIDTH; x++) {
-            for(int y = 0; y < HEIGHT; y++) {
-                for(int z = 0; z < WIDTH; z++) {
+        MeshBuilder builder = new MeshBuilder();
+
+        for (int x = 0; x < WIDTH; x++) {
+            for (int y = 0; y < HEIGHT; y++) {
+                for (int z = 0; z < WIDTH; z++) {
                     Block block = getBlock(x, y, z);
-                    if (block != null && block.isSolid()) {
-                        Cuboid cuboid = new Cuboid(new Vector3f(x, y, z), new Vector3f(1, 1, 1));
-                        float[] vertices = cuboid.generateVertices();
-                        for (float vertex : vertices) {
-                            verticesList.add(vertex);
-                        }
-                        float[] texCoords = cuboid.generateTexCoords();
-                        for(float texCoord : texCoords) {
-                            texCoordsList.add(texCoord);
+                    if (block == null || !block.isSolid()) continue;
+
+                    for (Block.Direction dir : Block.Direction.values()) {
+                        Block neighbor = getBlock(dir.offset(x, y, z));
+                        if (neighbor == null || !neighbor.isSolid()) {
+                            builder.addFace(x, y, z, dir, block);
                         }
                     }
                 }
             }
         }
-        float[] vertices = toFloatArray(verticesList);
-        float[] texCoords = toFloatArray(texCoordsList);
 
-        Mesh mesh = new Mesh(vertices, texCoords);
-        return mesh;
+        Mesh.MeshData data = builder.buildData();
+
+        return Mesh.mergeMeshes(List.of(data));
     }
+
+    public void setEntities(List<LivingEntity> entities) {
+        this.entities.clear();
+        this.entities.addAll(entities);
+    }
+
+
     public static float[] toFloatArray(List<Float> list) {
         float[] array = new float[list.size()];
         for (int i = 0; i < list.size(); i++) {

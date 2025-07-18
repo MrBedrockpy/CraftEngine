@@ -1,10 +1,11 @@
 package ru.mrbedrockpy.craftengine.registry;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 public class Registry<T>{
-    private Map<String, T> registry;
+    private final Map<String, T> registry = new HashMap<>();
 
     private boolean frozen = false;
 

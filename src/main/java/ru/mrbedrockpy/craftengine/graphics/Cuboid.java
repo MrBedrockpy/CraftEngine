@@ -9,7 +9,6 @@ import static org.lwjgl.opengl.GL46C.*;
 
 public class Cuboid {
 
-    private final Mesh mesh;
     private  final OutlineMesh outlineMesh;
     private final Vector3f position;
     private final Vector3f size;
@@ -19,7 +18,7 @@ public class Cuboid {
         this.position = new Vector3f(position);
         this.size = new Vector3f(size);
         float[] texCoords = generateTexCoords();
-        this.mesh = new Mesh(generateVertices(), texCoords);
+//        this.mesh = new Mesh(generateVertices(), texCoords);
         this.texture = Texture.load("block.png");
         this.outlineMesh = new OutlineMesh(generateVertices(), texCoords);
     }
@@ -32,7 +31,7 @@ public class Cuboid {
 
     public void render(Matrix4f view, Matrix4f projection) {
         texture.use();
-        mesh.render(getModelMatrix(), view, projection);
+//        mesh.render(getModelMatrix(), view, projection);
     }
 
     public void renderOutline(Matrix4f view, Matrix4f projection) {
@@ -50,7 +49,6 @@ public class Cuboid {
     }
 
     public void cleanup() {
-        mesh.cleanup();
         outlineMesh.cleanup();
     }
 

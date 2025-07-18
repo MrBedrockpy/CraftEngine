@@ -7,6 +7,7 @@ import org.joml.Vector3i;
 import ru.mrbedrockpy.craftengine.CraftEngineClient;
 import ru.mrbedrockpy.craftengine.graphics.Cuboid;
 import ru.mrbedrockpy.craftengine.graphics.Mesh;
+import ru.mrbedrockpy.craftengine.graphics.Shader;
 import ru.mrbedrockpy.craftengine.graphics.Texture;
 import ru.mrbedrockpy.craftengine.window.Camera;
 import ru.mrbedrockpy.craftengine.world.block.Block;
@@ -22,6 +23,7 @@ public class WorldRenderer {
     private final Camera camera;
     private final int width, height, depth;
     private Vector3i selectedBlock;
+    private Shader shader;
     private Texture texture;
     private Mesh mesh;
 
@@ -32,6 +34,7 @@ public class WorldRenderer {
         this.depth = depth;
 
         texture = Texture.load("block.png");
+        shader = Shader.load("vertex.glsl", "fragment.glsl");
         cuboids = new Cuboid[width][height][depth];
     }
 
@@ -62,14 +65,19 @@ public class WorldRenderer {
         if(mesh == null) {
             mesh = chunk.getChunkMesh();
         }
+        shader.use();
+        shader.setUniformMatrix4f("model", getModelMatrix(chunk));
+        shader.setUniformMatrix4f("view", camera.getViewMatrix());
+        shader.setUniformMatrix4f("projection", camera.getProjectionMatrix());
         texture.use();
 //        for(Chunk[] chunks : world.getChunks()){
 //            for (Chunk chunk : chunks){
 //                if(chunk == null || chunk.getChunkMesh() == null) continue;
-                mesh.render(getModelMatrix(chunk), player.getCamera().getViewMatrix(), player.getCamera().getProjectionMatrix());
 //            }
 //        }
+        mesh.render();
         texture.unbind();
+        shader.unbind();
     }
 
     public Matrix4f getModelMatrix(Chunk chunk) {
