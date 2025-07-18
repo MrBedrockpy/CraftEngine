@@ -31,7 +31,9 @@ public abstract class World {
     private void generateWorld() {
         for (int chunkX = 0; chunkX < chunks.length; chunkX++) {
             for (int chunkZ = 0; chunkZ < chunks.length; chunkZ++) {
-                chunkGenerator.generate(new Vector2i(chunkX, chunkZ), getChunkByChunkPos(chunkX, chunkZ));
+                Chunk chunk = new Chunk(new Vector2i(chunkX, chunkZ));
+                chunkGenerator.generate(chunk.getPosition(), chunk);
+                this.chunks[chunkX][chunkZ] = chunk;
             }
         }
     }
