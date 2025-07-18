@@ -1,53 +1,79 @@
 package ru.mrbedrockpy.craftengine.world;
 
-import org.joml.Vector2i;
+import lombok.Getter;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
 import org.joml.Vector3i;
 import ru.mrbedrockpy.craftengine.phys.AABB;
 import ru.mrbedrockpy.craftengine.world.block.Block;
 import ru.mrbedrockpy.craftengine.world.entity.LivingEntity;
-import ru.mrbedrockpy.craftengine.world.generator.ChunkGenerator;
 import ru.mrbedrockpy.craftengine.world.raycast.BlockRaycastResult;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class World {
+    protected final int width = 32;
+    protected final int height = 16;
+    protected final int depth = 32;
 
-    private final Chunk[][] chunks;
-
-    private final ChunkGenerator chunkGenerator;
-
-    private final List<LivingEntity> entities;
-
-    public World(int size, ChunkGenerator chunkGenerator) {
-        this.chunks = new Chunk[size][size];
-        this.chunkGenerator = chunkGenerator;
-        this.entities = new ArrayList<>();
-        generateWorld();
-    }
-
-    private void generateWorld() {
-        for (int chunkX = 0; chunkX < chunks.length; chunkX++) {
-            for (int chunkZ = 0; chunkZ < chunks.length; chunkZ++) {
-                chunkGenerator.generate(new Vector2i(chunkX, chunkZ), getChunkByChunkPos(chunkX, chunkZ));
-            }
-        }
-    }
-
+    protected final List<LivingEntity> entities = new ArrayList<>();
+    protected Block[][][] blocks = new Block[width][height][depth];
     public void tick() {
-        for (int chunkX = 0; chunkX < chunks.length; chunkX++) {
-            for (int chunkZ = 0; chunkZ < chunks.length; chunkZ++) {
-                Chunk chunk = getChunkByChunkPos(chunkX, chunkZ);
-                List<LivingEntity> entitiesInChunk = new ArrayList<>();
-                for (LivingEntity entity: entities) {
-                    getChunkByBlockPos(Math.round(entity.getPosition().x), Math.round(entity.getPosition().z));
+        for (LivingEntity entity : entities) {
+            entity.tick();
+        }
+    }
+
+    public void addEntity(LivingEntity entity) {
+        entities.add(entity);
+    }
+
+    public abstract void generateWorld();
+    public Block getBlock(int x, int y, int z) {
+        if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) return null;
+        return blocks[x][y][z];
+    }
+
+    public void setBlock(int x, int y, int z, Block block) {
+        if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) return;
+        blocks[x][y][z] = block;
+    }
+
+    public ArrayList<AABB> getCubes(AABB boundingBox) {
+        ArrayList<AABB> boundingBoxList = new ArrayList<>();
+
+        int minX = (int) (Math.floor(boundingBox.minX) - 1);
+        int maxX = (int) (Math.ceil(boundingBox.maxX) + 1);
+        int minY = (int) (Math.floor(boundingBox.minY) - 1);
+        int maxY = (int) (Math.ceil(boundingBox.maxY) + 1);
+        int minZ = (int) (Math.floor(boundingBox.minZ) - 1);
+        int maxZ = (int) (Math.ceil(boundingBox.maxZ) + 1);
+
+        minX = Math.max(0, minX);
+        minY = Math.max(0, minY);
+        minZ = Math.max(0, minZ);
+
+        maxX = Math.min(this.width, maxX);
+        maxY = Math.min(this.height, maxY);
+        maxZ = Math.min(this.depth, maxZ);
+
+        for (int x = minX; x < maxX; x++) {
+            for (int y = minY; y < maxY; y++) {
+                for (int z = minZ; z < maxZ; z++) {
+
+                    Block block = getBlock(x, y, z);
+                    if (block != null) {
+
+                        AABB aabb = block.getAABB(x, y, z);
+                        if (aabb != null) {
+                            boundingBoxList.add(aabb);
+                        }
+                    }
                 }
-                chunk.setEntities(entitiesInChunk);
-                chunk.tick();
             }
         }
+        return boundingBoxList;
     }
 
     // TODO: пофиксить то что направление определяется вектором направления а не стороной на которую смотрит игрок
@@ -107,7 +133,7 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH;
+                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH; // ← тут было наоборот
                 }
             } else {
                 if (sideDistY < sideDistZ) {
@@ -119,7 +145,7 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH;
+                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH; // ← и тут
                 }
             }
             if (distance > maxDistance) {
@@ -133,107 +159,5 @@ public abstract class World {
         }
 
         return null;
-    }
-
-    public Chunk getChunkByChunkPos(int x, int z) {
-        try {
-            return chunks[x][z];
-        } catch (IndexOutOfBoundsException e) {
-            return null;
-        }
-    }
-
-    public Chunk getChunkByBlockPos(int x, int z) {
-        return getChunkByChunkPos(x / Chunk.WIDTH, z / Chunk.WIDTH);
-    }
-
-    public Block getBlock(Vector3i position) {
-        Chunk chunk = getChunkByBlockPos(position.x, position.z);
-        if (chunk == null) return null;
-        return chunk.getBlock(
-                position.x % Chunk.WIDTH,
-                position.y % Chunk.HEIGHT,
-                position.z % Chunk.WIDTH
-        );
-    }
-
-    public Block getBlock(int x, int y, int z) {
-        Chunk chunk = getChunkByBlockPos(x, z);
-        if (chunk == null) return null;
-        return chunk.getBlock(
-                x % Chunk.WIDTH,
-                y % Chunk.HEIGHT,
-                z % Chunk.WIDTH
-        );
-    }
-
-    public boolean setBlock(Vector3i position, Block block) {
-        Chunk chunk = getChunkByBlockPos(position.x, position.z);
-        if (chunk == null) return false;
-        return chunk.setBlock(
-                position.x % Chunk.WIDTH,
-                position.y % Chunk.HEIGHT,
-                position.z % Chunk.WIDTH,
-                block
-        );
-    }
-
-    public boolean setBlock(int x, int y, int z, Block block) {
-        Chunk chunk = getChunkByBlockPos(x, z);
-        if (chunk == null) return false;
-        return chunk.setBlock(
-                x % Chunk.WIDTH,
-                y % Chunk.HEIGHT,
-                z % Chunk.WIDTH,
-                block
-        );
-    }
-
-    public ArrayList<AABB> getCubes(AABB boundingBox) {
-        ArrayList<AABB> boundingBoxList = new ArrayList<>();
-
-        int minX = (int) (Math.floor(boundingBox.minX) - 1);
-        int maxX = (int) (Math.ceil(boundingBox.maxX) + 1);
-        int minY = (int) (Math.floor(boundingBox.minY) - 1);
-        int maxY = (int) (Math.ceil(boundingBox.maxY) + 1);
-        int minZ = (int) (Math.floor(boundingBox.minZ) - 1);
-        int maxZ = (int) (Math.ceil(boundingBox.maxZ) + 1);
-
-        minX = Math.max(0, minX);
-        minY = Math.max(0, minY);
-        minZ = Math.max(0, minZ);
-
-        maxX = Math.min(Chunk.WIDTH, maxX);
-        maxY = Math.min(Chunk.HEIGHT, maxY);
-        maxZ = Math.min(Chunk.WIDTH, maxZ);
-
-        for (int x = minX; x < maxX; x++) {
-            for (int y = minY; y < maxY; y++) {
-                for (int z = minZ; z < maxZ; z++) {
-
-                    Block block = getBlock(x, y, z);
-                    if (block != null) {
-
-                        AABB aabb = block.getAABB(x, y, z);
-                        if (aabb != null) {
-                            boundingBoxList.add(aabb);
-                        }
-                    }
-                }
-            }
-        }
-        return boundingBoxList;
-    }
-
-    public int getWorldSize() {
-        return this.chunks.length * Chunk.WIDTH;
-    }
-
-    public void addEntity(LivingEntity entity) {
-        entities.add(entity);
-    }
-
-    public void removeEntity(LivingEntity entity) {
-        entities.remove(entity);
     }
 }

@@ -70,6 +70,7 @@ public class ClientPlayerEntity extends LivingEntity {
     public void render(Camera camera) {
     }
 
+
     public void onMouseClick(MouseClickEvent event) {
         if (event.getButton() == GLFW_MOUSE_BUTTON_LEFT) {
             BlockRaycastResult blockRaycastResult = world.raycast(camera.getPosition().add(0, eyeOffset, 0), camera.getFront(), 4.5f);
