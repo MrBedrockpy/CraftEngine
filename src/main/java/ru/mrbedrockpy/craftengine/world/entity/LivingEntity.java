@@ -12,7 +12,6 @@ import ru.mrbedrockpy.craftengine.world.World;
 
 import java.util.List;
 
-// TODO: Add normal collision detection
 public abstract class LivingEntity {
     @Getter
     protected Vector3f position = new Vector3f();
@@ -27,9 +26,7 @@ public abstract class LivingEntity {
     protected boolean onGround = false;
 
     // Minecraft-like gravity
-    private final float gravity = -25f;
-    private final float jumpStrength = 10.0f;
-    protected float eyeHeight = 1.62f;
+    private final float jumpStrength = 1.1f;
     public AABB boundingBox;
     protected Vector2f boundingBoxSize = new Vector2f(0.6f, 1.8f);
 
@@ -44,7 +41,7 @@ public abstract class LivingEntity {
         this.world.addEntity(this);
     }
 
-    public void update(float deltaTime, ClientWorld world){
+    public void update(float deltaTime, float partialTick, ClientWorld world){
 //        if (!onGround) {
 //            velocity.y += gravity * deltaTime;
 //        }
@@ -61,11 +58,11 @@ public abstract class LivingEntity {
     public abstract void render(Camera camera);
 
     public void tick() {
-        prevPosition = position;
+        prevPosition = new Vector3f(position);
     }
 
     public void move(Vector3d direction) {
-        Vector3d prevPosition = direction;
+        Vector3d prevDir = new Vector3d(direction);
 
         List<AABB> aABBs = this.world.getCubes(this.boundingBox.expand(direction));
 
@@ -84,14 +81,17 @@ public abstract class LivingEntity {
         }
         this.boundingBox.move(0.0F, 0.0F, direction.z);
 
-        this.onGround = prevPosition.y != direction.y && prevPosition.y < 0.0F;
+        this.onGround = prevDir.y != direction.y && prevDir.y < 0.0F;
 
-        if (prevPosition.x != direction.x) this.velocity.x = 0.0F;
-        if (prevPosition.y != direction.y) this.velocity.y  = 0.0F;
-        if (prevPosition.z != direction.z) this.velocity.z = 0.0F;
+        if (prevDir.x != direction.x) this.velocity.x = 0.0F;
+        if (prevDir.y != direction.y) this.velocity.y  = 0.0F;
+        if (prevDir.z != direction.z) this.velocity.z = 0.0F;
 
-        setPosition(new Vector3f((float) ((this.boundingBox.minX + this.boundingBox.maxX) / 2.0D), (float) (this.boundingBox.minY + this.eyeHeight),
-                (float) ((this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D)));
+        position.set(new Vector3f(
+                (float) ((this.boundingBox.minX + this.boundingBox.maxX) / 2.0D),
+                (float) this.boundingBox.minY,
+                (float) ((this.boundingBox.minZ + this.boundingBox.maxZ) / 2.0D)
+        ));
     }
 
     protected void moveRelative(float x, float z, float speed) {
@@ -107,21 +107,23 @@ public abstract class LivingEntity {
         double sin = Math.sin(Math.toRadians(this.yaw));
         double cos = Math.cos(Math.toRadians(this.yaw));
 
-        velocity.set(x * cos - z * sin, velocity.y, z * cos + x * sin);
+        velocity.x += (float) (x * cos - z * sin);
+        velocity.z += (float) (z * cos + x * sin);
     }
 
     public void setPosition(Vector3f position) {
         this.position.set(position);
-        this.boundingBox = new AABB(position.x - size.x, position.y - size.y,
-                position.z - size.x, position.x + size.x,
-                position.y + size.y, position.z + size.x);
+        this.boundingBox = new AABB(
+                position.x - size.x / 2, position.y, position.z - size.z / 2,
+                position.x + size.x / 2, position.y + size.y, position.z + size.z / 2
+        );
     }
 
 
     public void jump() {
-//        if (onGround) {
-//            velocity.y = jumpStrength;
-//            onGround = false;
-//        }
+        if (onGround) {
+            velocity.y = jumpStrength;
+            onGround = false;
+        }
     }
 }

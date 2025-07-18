@@ -39,4 +39,7 @@ public class TickSystem {
         }
     }
 
+    public float getPartialTick() {
+        return accumulator / tickTime;
+    }
 }

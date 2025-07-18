@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.*;
 public class ClientPlayerEntity extends LivingEntity {
     @Getter
     private final Camera camera = new Camera();
-    private final float speed = 0.045f;
+    private final float speed = 1f;
     private final float sensitivity = 20.0f;
     @Getter
     private final float eyeOffset = 1.8f;
@@ -25,13 +25,13 @@ public class ClientPlayerEntity extends LivingEntity {
     }
 
     @Override
-    public void update(float deltaTime, ClientWorld world) {
-        super.update(deltaTime, world);
+    public void update(float deltaTime, float partialTick, ClientWorld world) {
+        super.update(deltaTime, partialTick, world);
         camera.rotate(new Vector2f(
                 (float) -Input.getDeltaY() * sensitivity * deltaTime,
                 (float) Input.getDeltaX() * sensitivity * deltaTime
         ));
-        Vector3f cameraMove = interpolatePosition(prevPosition, position, deltaTime);
+        Vector3f cameraMove = interpolatePosition(prevPosition, position, partialTick);
         camera.setPosition(cameraMove);
     }
 
@@ -64,10 +64,6 @@ public class ClientPlayerEntity extends LivingEntity {
             velocity.x *= 0.7f;
             velocity.z *= 0.7f;
         }
-    }
-    @Override
-    public void move(Vector3d direction) {
-        super.move(direction);
     }
 
     @Override

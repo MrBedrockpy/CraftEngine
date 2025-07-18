@@ -19,7 +19,7 @@ public class FPSCounter {
             frames = 0;
             lastTime = currentTime;
 
-//            System.out.println("FPS: " + fps);
+            System.out.println("FPS: " + fps);
         }
     }
 

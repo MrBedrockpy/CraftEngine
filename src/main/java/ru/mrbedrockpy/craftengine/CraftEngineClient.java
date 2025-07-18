@@ -70,7 +70,7 @@ public class CraftEngineClient {
             MouseClickEvent clickEvent = new MouseClickEvent(GLFW.GLFW_MOUSE_BUTTON_RIGHT, Input.getX(), Input.getY());
             eventManager.callEvent(clickEvent);
         }
-        player.update(deltaTime, clientWorld);
+        player.update(deltaTime,tickSystem.getPartialTick() , clientWorld);
     }
 
     private void render() {
