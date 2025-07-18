@@ -40,6 +40,21 @@ public abstract class World {
         blocks[x][y][z] = block;
     }
 
+    public void placeBlock(int x, int y, int z, Block block) {
+        if (x < 0 || x >= width || y < 0 || y >= height || z < 0 || z >= depth) return;
+
+        for (LivingEntity entity : entities) {
+            if (entity.getX() == x && entity.getY() == y && entity.getZ() == z) {
+                return;
+            }
+        }
+
+        Block current = getBlock(x, y, z);
+        if (current == null) {
+            setBlock(x, y, z, block);
+        }
+    }
+
     public ArrayList<AABB> getCubes(AABB boundingBox) {
         ArrayList<AABB> boundingBoxList = new ArrayList<>();
 
@@ -133,7 +148,7 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH; // ← тут было наоборот
+                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH; // ← тут было наоборот
                 }
             } else {
                 if (sideDistY < sideDistZ) {
@@ -145,7 +160,7 @@ public abstract class World {
                     blockPos.z += stepZ;
                     distance = sideDistZ;
                     sideDistZ += deltaDistZ;
-                    lastFace = stepZ > 0 ? Block.Direction.NORTH : Block.Direction.SOUTH; // ← и тут
+                    lastFace = stepZ > 0 ? Block.Direction.SOUTH : Block.Direction.NORTH; // ← и тут
                 }
             }
             if (distance > maxDistance) {

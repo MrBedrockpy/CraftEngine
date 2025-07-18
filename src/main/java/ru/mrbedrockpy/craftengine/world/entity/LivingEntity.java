@@ -113,4 +113,16 @@ public abstract class LivingEntity {
             onGround = false;
         }
     }
+
+    public int getX() {
+        return (int) position.x;
+    }
+
+    public int getY() {
+        return (int) position.y;
+    }
+
+    public int getZ() {
+        return (int) position.z;
+    }
 }

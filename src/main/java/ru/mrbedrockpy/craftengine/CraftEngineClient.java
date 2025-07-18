@@ -8,6 +8,7 @@ import ru.mrbedrockpy.craftengine.event.MouseClickEvent;
 import ru.mrbedrockpy.craftengine.graphics.Texture;
 import ru.mrbedrockpy.craftengine.gui.DrawContext;
 import ru.mrbedrockpy.craftengine.gui.HudRenderer;
+import ru.mrbedrockpy.craftengine.gui.screen.ExampleScreen;
 import ru.mrbedrockpy.craftengine.window.*;
 import ru.mrbedrockpy.craftengine.world.ClientWorld;
 import ru.mrbedrockpy.craftengine.world.TickSystem;
@@ -43,9 +44,9 @@ public class CraftEngineClient {
     }
 
     public void initialize() {
-        Window.initialize(new WindowSettings(1920, 1080, "CraftEngine Client", false, true));
+        Window.initialize(new WindowSettings(1920, 1080, "CraftEngine Client", true, true));
         Input.initialize();
-        player = new ClientPlayerEntity(new Vector3f(5, 100, 5), clientWorld);
+        player = new ClientPlayerEntity(new Vector3f(5, 1, 5), clientWorld);
         clientWorld = new ClientWorld(player, tickSystem);
         player.setWorld(clientWorld);
         clientWorld.generateWorld();
@@ -54,6 +55,7 @@ public class CraftEngineClient {
         hudRenderer = new HudRenderer(Window.getWidth(), Window.getHeight());
         hudRenderer.texture = Texture.load("cursor.png");
         hudRenderer.hudTexture = Texture.load("hotbar.png");
+//        player.setScreen(new ExampleScreen());
     }
 
     private void update(float deltaTime) {
@@ -76,5 +78,8 @@ public class CraftEngineClient {
     private void render() {
         clientWorld.render();
         hudRenderer.render(context);
+        if(player.getCurrentScreen() != null) {
+            player.getCurrentScreen().render(context, (int) Input.getX(), (int) Input.getY(), (float) Input.getDeltaX());
+        }
     }
 }

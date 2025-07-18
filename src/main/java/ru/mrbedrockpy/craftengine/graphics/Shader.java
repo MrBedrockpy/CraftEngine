@@ -94,6 +94,23 @@ public class Shader {
         }
     }
 
+    public void setUniform4f(String name, float r, float g, float b, float a) {
+        int location = glGetUniformLocation(id, name);
+        if (location != -1)
+            glUniform4f(location, r, g, b, a);
+        else
+            System.err.println("Uniform not found: " + name);
+    }
+
+    public void setUniform1b(String name, boolean value) {
+        int location = glGetUniformLocation(id, name);
+        if (location != -1)
+            glUniform1i(location, value ? 1 : 0); // booleans are set as integers in OpenGL
+        else
+            System.err.println("Uniform not found: " + name);
+    }
+
+
     public void dispose() {
         glDeleteProgram(id);
     }
