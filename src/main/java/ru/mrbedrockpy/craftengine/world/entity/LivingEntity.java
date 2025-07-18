@@ -14,6 +14,7 @@ import java.util.List;
 
 // TODO: разделить LivingEntity на Entity и LivingEntity, чтобы не было лишних методов в LivingEntity
 public abstract class LivingEntity {
+
     @Getter
     protected Vector3f position = new Vector3f();
     protected Vector3f velocity = new Vector3f();

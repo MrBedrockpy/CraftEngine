@@ -43,12 +43,11 @@ public class CraftEngineClient {
     }
 
     public void initialize() {
-        Window.initialize(new WindowSettings(1920, 1080, "CraftEngine Client", false, true));
+        Window.initialize(new WindowSettings(1280, 720, "CraftEngine Client", true, false));
         Input.initialize();
         player = new ClientPlayerEntity(new Vector3f(5, 100, 5), clientWorld);
-        clientWorld = new ClientWorld(player, tickSystem);
+        clientWorld = new ClientWorld(8, player, tickSystem);
         player.setWorld(clientWorld);
-        clientWorld.generateWorld();
         eventManager.addListener(MouseClickEvent.class, player::onMouseClick);
         context = new DrawContext(Window.getWidth(), Window.getHeight());
         hudRenderer = new HudRenderer(Window.getWidth(), Window.getHeight());

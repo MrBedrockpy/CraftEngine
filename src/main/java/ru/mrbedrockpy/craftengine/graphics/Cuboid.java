@@ -68,16 +68,6 @@ public class Cuboid {
         return texCoords;
     }
     private float[] generateVertices() {
-//        Vector3f[] v = {
-//                new Vector3f(-0.5f, -0.5f, -0.5f),
-//                new Vector3f( 0.5f, -0.5f, -0.5f),
-//                new Vector3f( 0.5f,  0.5f, -0.5f),
-//                new Vector3f(-0.5f,  0.5f, -0.5f),
-//                new Vector3f(-0.5f, -0.5f,  0.5f),
-//                new Vector3f( 0.5f, -0.5f,  0.5f),
-//                new Vector3f( 0.5f,  0.5f,  0.5f),
-//                new Vector3f(-0.5f,  0.5f,  0.5f)
-//        };
         Vector3f[] v = {
                 new Vector3f(0f, 0f, 0f),
                 new Vector3f( 1f, 0f, 0f),
