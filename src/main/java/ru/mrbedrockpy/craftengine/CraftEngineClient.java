@@ -43,7 +43,7 @@ public class CraftEngineClient {
     }
 
     public void initialize() {
-        Window.initialize(new WindowSettings(1280, 720, "CraftEngine Client", false, true));
+        Window.initialize(new WindowSettings(1920, 1080, "CraftEngine Client", false, true));
         Input.initialize();
         player = new ClientPlayerEntity(new Vector3f(5, 100, 5), clientWorld);
         clientWorld = new ClientWorld(player, tickSystem);

@@ -16,7 +16,7 @@ public abstract class World {
     protected final int width = 32;
     protected final int height = 16;
     protected final int depth = 32;
-    @Getter
+
     protected final List<LivingEntity> entities = new ArrayList<>();
     protected Block[][][] blocks = new Block[width][height][depth];
     public void tick() {
@@ -40,7 +40,43 @@ public abstract class World {
         blocks[x][y][z] = block;
     }
 
+    public ArrayList<AABB> getCubes(AABB boundingBox) {
+        ArrayList<AABB> boundingBoxList = new ArrayList<>();
 
+        int minX = (int) (Math.floor(boundingBox.minX) - 1);
+        int maxX = (int) (Math.ceil(boundingBox.maxX) + 1);
+        int minY = (int) (Math.floor(boundingBox.minY) - 1);
+        int maxY = (int) (Math.ceil(boundingBox.maxY) + 1);
+        int minZ = (int) (Math.floor(boundingBox.minZ) - 1);
+        int maxZ = (int) (Math.ceil(boundingBox.maxZ) + 1);
+
+        minX = Math.max(0, minX);
+        minY = Math.max(0, minY);
+        minZ = Math.max(0, minZ);
+
+        maxX = Math.min(this.width, maxX);
+        maxY = Math.min(this.height, maxY);
+        maxZ = Math.min(this.depth, maxZ);
+
+        for (int x = minX; x < maxX; x++) {
+            for (int y = minY; y < maxY; y++) {
+                for (int z = minZ; z < maxZ; z++) {
+
+                    Block block = getBlock(x, y, z);
+                    if (block != null) {
+
+                        AABB aabb = block.getAABB(x, y, z);
+                        if (aabb != null) {
+                            boundingBoxList.add(aabb);
+                        }
+                    }
+                }
+            }
+        }
+        return boundingBoxList;
+    }
+
+    // TODO: пофиксить то что направление определяется вектором направления а не стороной на которую смотрит игрок
     public BlockRaycastResult raycast(Vector3f originF, Vector3f directionF, float maxDistanceF) {
 
         Vector3d origin = new Vector3d(originF.x, originF.y, originF.z);
@@ -124,45 +160,4 @@ public abstract class World {
 
         return null;
     }
-
-    public ArrayList<AABB> getCubes(AABB boundingBox) {
-        ArrayList<AABB> boundingBoxList = new ArrayList<>();
-
-        int minX = (int) (Math.floor(boundingBox.minX) - 1);
-        int maxX = (int) (Math.ceil(boundingBox.maxX) + 1);
-        int minY = (int) (Math.floor(boundingBox.minY) - 1);
-        int maxY = (int) (Math.ceil(boundingBox.maxY) + 1);
-        int minZ = (int) (Math.floor(boundingBox.minZ) - 1);
-        int maxZ = (int) (Math.ceil(boundingBox.maxZ) + 1);
-
-        // Minimum level position
-        minX = Math.max(0, minX);
-        minY = Math.max(0, minY);
-        minZ = Math.max(0, minZ);
-
-        // Maximum level position
-        maxX = Math.min(this.width, maxX);
-        maxY = Math.min(this.depth, maxY);
-        maxZ = Math.min(this.height, maxZ);
-
-        // Include all surrounding tiles
-        for (int x = minX; x < maxX; x++) {
-            for (int y = minY; y < maxY; y++) {
-                for (int z = minZ; z < maxZ; z++) {
-
-                    Block block = getBlock(x, y, z);
-                    if (block != null) {
-
-                        AABB aabb = block.getAABB(x, y, z);
-                        if (aabb != null) {
-                            boundingBoxList.add(aabb);
-                        }
-                    }
-                }
-            }
-        }
-        return boundingBoxList;
-    }
-
-
 }

@@ -14,23 +14,13 @@ public class AABB {
     public double maxY;
     public double maxZ;
 
-    /**
-     * Bounding box
-     *
-     * @param minX Minimum x side
-     * @param minY Minimum y side
-     * @param minZ Minimum z side
-     * @param maxX Maximum x side
-     * @param maxY Maximum y side
-     * @param maxZ Maximum z side
-     */
-    public AABB(double minX, double minY, double minZ, double maxX, double maxY, double maxZ) {
-        this.minX = minX;
-        this.minY = minY;
-        this.minZ = minZ;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.maxZ = maxZ;
+    public AABB(double x1, double y1, double z1, double x2, double y2, double z2) {
+        this.minX = Math.min(x1, x2);
+        this.minY = Math.min(y1, y2);
+        this.minZ = Math.min(z1, z2);
+        this.maxX = Math.max(x1, x2);
+        this.maxY = Math.max(y1, y2);
+        this.maxZ = Math.max(z1, z2);
     }
 
     /**

@@ -12,6 +12,7 @@ import ru.mrbedrockpy.craftengine.world.World;
 
 import java.util.List;
 
+// TODO: разделить LivingEntity на Entity и LivingEntity, чтобы не было лишних методов в LivingEntity
 public abstract class LivingEntity {
     @Getter
     protected Vector3f position = new Vector3f();
@@ -25,8 +26,7 @@ public abstract class LivingEntity {
 
     protected boolean onGround = false;
 
-    // Minecraft-like gravity
-    private final float jumpStrength = 1.1f;
+    private final float jumpStrength = 0.7f;
     public AABB boundingBox;
     protected Vector2f boundingBoxSize = new Vector2f(0.6f, 1.8f);
 
@@ -42,18 +42,6 @@ public abstract class LivingEntity {
     }
 
     public void update(float deltaTime, float partialTick, ClientWorld world){
-//        if (!onGround) {
-//            velocity.y += gravity * deltaTime;
-//        }
-//
-//        position.add(new Vector3f(velocity).mul(deltaTime));
-//
-//        if (world.getBlock((int) position.x, (int) (position.y), (int) position.z) != null) {
-//            velocity.y = 0;
-//            onGround = true;
-//        } else {
-//            onGround = false;
-//        }
     }
     public abstract void render(Camera camera);
 

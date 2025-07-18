@@ -82,7 +82,7 @@ public class Camera {
         front.z = (float) (Math.cos(pitchRad) * Math.sin(yawRad));
         front.normalize();
 
-        Vector3f eyePosition = new Vector3f(position).add(0, 1.8f, 0);
+        Vector3f eyePosition = new Vector3f(position).add(0, 1.6f, 0);
         Vector3f center = new Vector3f(eyePosition).add(front);
         Vector3f up = new Vector3f(0, 1, 0);
 
