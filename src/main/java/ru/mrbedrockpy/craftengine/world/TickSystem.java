@@ -13,11 +13,11 @@ public class TickSystem {
     private final float tickTime;
     private float accumulator = 0f;
 
-    private final List<TickListener> listeners = new ArrayList<>();
-
     public interface TickListener {
         void onTick();
     }
+
+    private final List<TickListener> listeners = new ArrayList<>();
 
     public TickSystem(int tps) {
         this.tps = tps;

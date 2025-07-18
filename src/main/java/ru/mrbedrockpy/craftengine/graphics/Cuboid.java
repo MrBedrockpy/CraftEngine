@@ -68,6 +68,16 @@ public class Cuboid {
         return texCoords;
     }
     private float[] generateVertices() {
+//        Vector3f[] v = {
+//                new Vector3f(-0.5f, -0.5f, -0.5f),
+//                new Vector3f( 0.5f, -0.5f, -0.5f),
+//                new Vector3f( 0.5f,  0.5f, -0.5f),
+//                new Vector3f(-0.5f,  0.5f, -0.5f),
+//                new Vector3f(-0.5f, -0.5f,  0.5f),
+//                new Vector3f( 0.5f, -0.5f,  0.5f),
+//                new Vector3f( 0.5f,  0.5f,  0.5f),
+//                new Vector3f(-0.5f,  0.5f,  0.5f)
+//        };
         Vector3f[] v = {
                 new Vector3f(0f, 0f, 0f),
                 new Vector3f( 1f, 0f, 0f),
@@ -78,6 +88,7 @@ public class Cuboid {
                 new Vector3f( 1f,  1f,  1f),
                 new Vector3f(0f,  1f,  1f)
         };
+
         int[] indices = {
                 0, 1, 2, 2, 3, 0,
                 5, 4, 7, 7, 6, 5,
@@ -86,6 +97,7 @@ public class Cuboid {
                 3, 2, 6, 6, 7, 3,
                 4, 5, 1, 1, 0, 4
         };
+
         float[] vertices = new float[indices.length * 3];
         for (int i = 0; i < indices.length; i++) {
             Vector3f vert = v[indices[i]];
@@ -93,6 +105,7 @@ public class Cuboid {
             vertices[i * 3 + 1] = vert.y;
             vertices[i * 3 + 2] = vert.z;
         }
+
         return vertices;
     }
 
