@@ -66,7 +66,7 @@ public class WorldRenderer {
 //        for(Chunk[] chunks : world.getChunks()){
 //            for (Chunk chunk : chunks){
 //                if(chunk == null || chunk.getChunkMesh() == null) continue;
-                mesh.render(getModelMatrix(new Chunk(new Vector2i())), player.getCamera().getViewMatrix(), player.getCamera().getProjectionMatrix());
+                mesh.render(getModelMatrix(chunk), player.getCamera().getViewMatrix(), player.getCamera().getProjectionMatrix());
 //            }
 //        }
         texture.unbind();

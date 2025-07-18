@@ -8,9 +8,11 @@ import ru.mrbedrockpy.craftengine.event.MouseClickEvent;
 import ru.mrbedrockpy.craftengine.graphics.Texture;
 import ru.mrbedrockpy.craftengine.gui.DrawContext;
 import ru.mrbedrockpy.craftengine.gui.HudRenderer;
+import ru.mrbedrockpy.craftengine.registry.Registries;
 import ru.mrbedrockpy.craftengine.window.*;
 import ru.mrbedrockpy.craftengine.world.ClientWorld;
 import ru.mrbedrockpy.craftengine.world.TickSystem;
+import ru.mrbedrockpy.craftengine.world.block.Block;
 import ru.mrbedrockpy.craftengine.world.entity.ClientPlayerEntity;
 
 public class CraftEngineClient {
@@ -52,6 +54,9 @@ public class CraftEngineClient {
         hudRenderer = new HudRenderer(Window.getWidth(), Window.getHeight());
         hudRenderer.texture = Texture.load("cursor.png");
         hudRenderer.hudTexture = Texture.load("hotbar.png");
+        Registries.BLOCKS.register("dirt", new Block(true));
+        Registries.BLOCKS.register("stone", new Block(true));
+        Registries.freeze();
     }
 
     private void update(float deltaTime) {
