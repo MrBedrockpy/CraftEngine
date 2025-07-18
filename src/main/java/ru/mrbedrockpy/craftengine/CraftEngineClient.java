@@ -15,7 +15,7 @@ import ru.mrbedrockpy.craftengine.world.entity.ClientPlayerEntity;
 
 public class CraftEngineClient {
     public static CraftEngineClient INSTANCE = new CraftEngineClient();
-    public DrawContext context;
+    private DrawContext context;
     public HudRenderer hudRenderer;
     public final EventManager eventManager = new EventManager();
     private final FPSCounter fpsCounter = new FPSCounter();

@@ -55,7 +55,7 @@ public class Cuboid {
     }
 
 
-    private float[] generateTexCoords() {
+    public float[] generateTexCoords() {
         float[] uvFace = {
                 0f, 0f, 1f, 0f, 1f, 1f,
                 1f, 1f, 0f, 1f, 0f, 0f
@@ -67,7 +67,7 @@ public class Cuboid {
         }
         return texCoords;
     }
-    private float[] generateVertices() {
+    public float[] generateVertices() {
         Vector3f[] v = {
                 new Vector3f(0f, 0f, 0f),
                 new Vector3f( 1f, 0f, 0f),

@@ -1,5 +1,6 @@
 package ru.mrbedrockpy.craftengine.gui;
 
+import ru.mrbedrockpy.craftengine.CraftEngineClient;
 import ru.mrbedrockpy.craftengine.graphics.Texture;
 
 public class HudRenderer {
@@ -15,5 +16,6 @@ public class HudRenderer {
         context.drawTexture(width / 2 - 25,height / 2 - 25, 50, 50, texture);
         context.drawTexture(width / 2 - hudTexture.getWidth() / 2 * 5, height - hudTexture.getHeight() * 5,
                 hudTexture.getWidth() * 5, hudTexture.getHeight() * 5, hudTexture);
+        context.drawText(String.valueOf(CraftEngineClient.INSTANCE.getFpsCounter().getFPS()), 0, 0);
     }
 }

@@ -1,6 +1,7 @@
 package ru.mrbedrockpy.craftengine.world.block;
 
 
+import org.joml.Vector3i;
 import ru.mrbedrockpy.craftengine.phys.AABB;
 
 public class Block {
@@ -19,12 +20,25 @@ public class Block {
     }
 
     public enum Direction {
-        UP,
-        DOWN,
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST,
-        NONE
+        NORTH(0, 0, -1),
+        SOUTH(0, 0, 1),
+        WEST(-1, 0, 0),
+        EAST(1, 0, 0),
+        UP(0, 1, 0),
+        DOWN(0, -1, 0),
+        NONE(0, 0, 0);
+
+        public final int dx, dy, dz;
+
+        Direction(int dx, int dy, int dz) {
+            this.dx = dx;
+            this.dy = dy;
+            this.dz = dz;
+        }
+
+        public Vector3i offset(int x, int y, int z) {
+            return new Vector3i(x + dx, y + dy, z + dz);
+        }
     }
+
 }

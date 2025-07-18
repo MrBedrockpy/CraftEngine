@@ -1,5 +1,6 @@
 package ru.mrbedrockpy.craftengine.world;
 
+import lombok.Getter;
 import org.joml.Vector2i;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -15,6 +16,7 @@ import java.util.List;
 
 public abstract class World {
 
+    @Getter
     private final Chunk[][] chunks;
 
     private final ChunkGenerator chunkGenerator;
@@ -137,6 +139,9 @@ public abstract class World {
 
     public Chunk getChunkByChunkPos(int x, int z) {
         try {
+            if(this.chunks[x][z] == null) {
+                this.chunks[x][z] = new Chunk(new Vector2i(x, z));
+            }
             return chunks[x][z];
         } catch (IndexOutOfBoundsException e) {
             return null;
